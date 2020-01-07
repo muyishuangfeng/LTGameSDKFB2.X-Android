@@ -35,7 +35,7 @@ public class FacebookPlatform extends AbsPlatform {
             IPlatform platform = null;
             LTGameOptions options = LTGameSdk.options();
             if (!LTGameUtil.isAnyEmpty(options.getLtAppId(),
-                    options.getLtAppKey(), options.getAdID(), options.getPackageID())) {
+                    options.getLtAppKey(), options.getAppName())) {
                 platform = new FacebookPlatform(context,  options.getLtAppId(),options.getAppName(),
                         options.getLtAppKey(), target);
             }
