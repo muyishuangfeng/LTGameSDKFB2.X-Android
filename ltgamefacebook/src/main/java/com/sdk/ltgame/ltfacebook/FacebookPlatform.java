@@ -24,7 +24,7 @@ public class FacebookPlatform extends AbsPlatform {
 
 
     private FacebookPlatform(Context context, String appId, String appKey, int target) {
-        super(context, appId,appKey, target);
+        super(context, appId, appKey, target);
     }
 
 
@@ -35,7 +35,7 @@ public class FacebookPlatform extends AbsPlatform {
             IPlatform platform = null;
             LTGameOptions options = LTGameSdk.options();
             if (!LTGameUtil.isAnyEmpty(options.getLtAppId(), options.getLtAppKey())) {
-                platform = new FacebookPlatform(context,  options.getLtAppId(),
+                platform = new FacebookPlatform(context, options.getLtAppId(),
                         options.getLtAppKey(), target);
             }
             return platform;
@@ -70,7 +70,7 @@ public class FacebookPlatform extends AbsPlatform {
 
     @Override
     public void login(Activity activity, int target, LoginObject object, OnLoginStateListener listener) {
-        mLoginHelper = new FacebookLoginHelper(activity, listener, target);
+        mLoginHelper = new FacebookLoginHelper(activity, object.getStats(), listener, target);
         mLoginHelper.login(object.getFacebookAppID(), activity, object.isLoginOut());
 
     }

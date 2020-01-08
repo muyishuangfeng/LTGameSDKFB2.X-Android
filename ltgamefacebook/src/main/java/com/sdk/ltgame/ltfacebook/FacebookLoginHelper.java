@@ -27,11 +27,14 @@ public class FacebookLoginHelper {
     private int mLoginTarget;
     private static WeakReference<Activity> mActivityRef;
     private OnLoginStateListener mListener;
+    //统计
+    private boolean isStats;
 
 
-    FacebookLoginHelper(Activity activity, OnLoginStateListener listener, int loginTarget) {
+    FacebookLoginHelper(Activity activity,boolean isStats, OnLoginStateListener listener, int loginTarget) {
         mActivityRef = new WeakReference<>(activity);
         this.mListener = listener;
+        this.isStats=isStats;
         this.mLoginTarget = loginTarget;
     }
 
@@ -80,7 +83,7 @@ public class FacebookLoginHelper {
                             public void onSuccess(LoginResult loginResult) {
                                 if (loginResult != null) {
                                     LoginRealizeManager.facebookLogin(mActivityRef.get(),
-                                            loginResult.getAccessToken().getToken(), mListener);
+                                            loginResult.getAccessToken().getToken(), isStats,mListener);
                                 }
 
                             }
