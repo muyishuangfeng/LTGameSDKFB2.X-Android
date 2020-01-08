@@ -22,8 +22,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //facebook登录
     implementation 'com.facebook.android:facebook-login:5.1.0'
-    implementation 'com.github.muyishuangfeng:LTGameSDKCore2.X-Android:2.0.2'
-    implementation 'com.github.muyishuangfeng:LTGameSDKNet2.X-Android:2.0.1'
+    implementation 'com.github.muyishuangfeng:LTGameSDKCore2.X-Android:2.0.4'
+    implementation 'com.github.muyishuangfeng:LTGameSDKNet2.X-Android:2.0.4'
 }
 
 // 指定编码
