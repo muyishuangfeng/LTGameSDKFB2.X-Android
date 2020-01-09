@@ -17,33 +17,85 @@ import com.sdk.ltgame.ltnet.base.Constants;
 import java.math.BigDecimal;
 import java.util.Currency;
 
+
 public class FacebookEventManager {
 
 
-    private static CustomBroadCaseReceiver mReceiver;
+    private static CustomBroadCaseReceiver mReceiver = new CustomBroadCaseReceiver();
+    private static FacebookEventManager sInstance;
+
+
+    private FacebookEventManager() {
+    }
+
+    /**
+     * 单例
+     */
+    public static FacebookEventManager getInstance() {
+        if (sInstance == null) {
+            synchronized (FacebookEventManager.class) {
+                if (sInstance == null) {
+                    sInstance = new FacebookEventManager();
+                }
+            }
+        }
+        return sInstance;
+    }
+
 
     /**
      * 注册广播
      */
-    public static void registerBroadcast(Context context) {
-        mReceiver = new CustomBroadCaseReceiver();
-        IntentFilter filter = new IntentFilter(Constants.GOOGLE_RECHARGE_RESULT_CODE);
-        context.registerReceiver(mReceiver, filter);
+    public void registerBroadcast(Context context, boolean fbEnable, boolean googleEnable,
+                                  boolean gpEnable, boolean guestEnable) {
+        if (mReceiver == null) {
+            mReceiver = new CustomBroadCaseReceiver();
+            IntentFilter filter = new IntentFilter();
+            if (gpEnable) {
+                filter.addAction(Constants.GOOGLE_RECHARGE_RESULT_CODE);
+            }
+            if (googleEnable) {
+                filter.addAction(Constants.GOOGLE_LOGIN_CODE);
+            }
+            if (fbEnable) {
+                filter.addAction(Constants.FB_LOGIN_CODE);
+            }
+            if (guestEnable) {
+                filter.addAction(Constants.GUEST_LOGIN_CODE);
+            }
+            context.registerReceiver(mReceiver, filter);
+        } else {
+            IntentFilter filter = new IntentFilter();
+            if (gpEnable) {
+                filter.addAction(Constants.GOOGLE_RECHARGE_RESULT_CODE);
+            }
+            if (googleEnable) {
+                filter.addAction(Constants.GOOGLE_LOGIN_CODE);
+            }
+            if (fbEnable) {
+                filter.addAction(Constants.FB_LOGIN_CODE);
+            }
+            if (guestEnable) {
+                filter.addAction(Constants.GUEST_LOGIN_CODE);
+            }
+            context.registerReceiver(mReceiver, filter);
+        }
     }
 
     /**
      * 反注册广播
      */
-    public static void unRegisterBroadcast(Context context) {
+    public void unRegisterBroadcast(Context context) {
         if (mReceiver != null) {
             context.unregisterReceiver(mReceiver);
+            mReceiver = null;
         }
     }
 
     /**
      * 开始
      */
-    public static void start(Context context, String appID) {
+    public void start(Context context, String appID) {
         FacebookSdk.setApplicationId(appID);
         FacebookSdk.sdkInitialize(context);
         FacebookSdk.setIsDebugEnabled(true);
@@ -54,7 +106,7 @@ public class FacebookEventManager {
     /**
      * 注册
      */
-    private static void register(Context context, int code) {
+  private   void register(Context context, int code) {
         AppEventsLogger logger = AppEventsLogger.newLogger(context);
         Bundle params = new Bundle();
         if (code == 0) {
@@ -70,19 +122,25 @@ public class FacebookEventManager {
     /**
      * 内购
      */
-    private static void recharge(Context context, double money, String unit, String orderID) {
-        AppEventsLogger logger = AppEventsLogger.newLogger(context);
-        BigDecimal decimal = BigDecimal.valueOf(money);
-        Currency currency = Currency.getInstance(unit.toUpperCase());
-        Bundle parameters = new Bundle();
-        parameters.putString("LTOrderId", orderID);
-        logger.logPurchase(decimal, currency, parameters);
+    private void recharge(Context context, double money, String unit, String orderID) {
+        try {
+            AppEventsLogger logger = AppEventsLogger.newLogger(context);
+            BigDecimal decimal = BigDecimal.valueOf(money);
+            Currency currency = Currency.getInstance(unit.toUpperCase());
+            Bundle parameters = new Bundle();
+            parameters.putString("LTOrderId", orderID);
+            logger.logPurchase(decimal, currency, parameters);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
     }
 
     /**
-     * 自定义广播
+     * 广播
      */
     private static class CustomBroadCaseReceiver extends BroadcastReceiver {
+
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() != null) {
@@ -92,24 +150,31 @@ public class FacebookEventManager {
                             if (intent.getExtras().getSerializable(Constants.GOOGLE_RECHARGE_CODE) != null) {
                                 ResultModel model = (ResultModel)
                                         intent.getExtras().getSerializable(Constants.GOOGLE_RECHARGE_CODE);
-                                recharge(context, model.getLt_price(), model.getLt_currency(), model.getLt_order_id());
+                                Log.e("TAG", model.getLt_price() + "===" + model.getLt_currency() + "===" + model.getLt_order_id());
+                                FacebookEventManager.getInstance().recharge(context, model.getLt_price(), model.getLt_currency(), model.getLt_order_id());
                             }
                         }
                         break;
                     }
                     case Constants.GOOGLE_LOGIN_CODE: {
-                        register(context, 1);
+                        Log.e("TAG", "GOOGLE_LOGIN_CODE");
+                        FacebookEventManager.getInstance().register(context, 1);
                         break;
                     }
                     case Constants.FB_LOGIN_CODE: {
-                        register(context, 0);
+                        Log.e("TAG", "FB_LOGIN_CODE");
+                        FacebookEventManager.getInstance().register(context, 0);
                         break;
                     }
                     case Constants.GUEST_LOGIN_CODE: {
-                        register(context, 2);
+                        Log.e("TAG", "GUEST_LOGIN_CODE");
+                        FacebookEventManager.getInstance().register(context, 2);
                         break;
                     }
+                    default:
+                        break;
                 }
+
             }
 
         }

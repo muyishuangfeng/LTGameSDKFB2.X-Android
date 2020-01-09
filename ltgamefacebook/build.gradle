@@ -23,7 +23,7 @@ dependencies {
     //facebook登录
     implementation 'com.facebook.android:facebook-login:5.1.0'
     implementation 'com.github.muyishuangfeng:LTGameSDKCore2.X-Android:2.0.4'
-    implementation 'com.github.muyishuangfeng:LTGameSDKNet2.X-Android:2.0.4'
+    implementation 'com.github.muyishuangfeng:LTGameSDKNet2.X-Android:2.0.6'
 }
 
 // 指定编码

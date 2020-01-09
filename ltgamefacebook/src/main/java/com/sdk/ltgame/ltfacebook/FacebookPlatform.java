@@ -70,7 +70,7 @@ public class FacebookPlatform extends AbsPlatform {
 
     @Override
     public void login(Activity activity, int target, LoginObject object, OnLoginStateListener listener) {
-        mLoginHelper = new FacebookLoginHelper(activity, object.getStats(), listener, target);
+        mLoginHelper = new FacebookLoginHelper(activity, listener, target);
         mLoginHelper.login(object.getFacebookAppID(), activity, object.isLoginOut());
 
     }
